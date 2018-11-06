@@ -24,12 +24,11 @@ public class DataFromFirebase {
     public String getNome() {
         return nome;
 
-        
     }
 
     public void getValue() {
         database =FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference().child("Calcado");
+        DatabaseReference myRef = database.getReference().child("Calcado").child("Profissional");
 
         myRef.addValueEventListener(new ValueEventListener() {
             @Override
