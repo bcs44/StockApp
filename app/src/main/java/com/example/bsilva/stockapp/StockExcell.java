@@ -34,11 +34,16 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Iterator;
+import java.util.List;
 
 public class StockExcell extends AppCompatActivity implements View.OnClickListener{
 
+
     Button writeExcelButton,readExcelButton;
     static String TAG = "ExelLog";
+    private static  List<Values> valuesList;
+
+
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
@@ -53,7 +58,7 @@ public class StockExcell extends AppCompatActivity implements View.OnClickListen
         DataFromFirebase dataFromFirebase = new DataFromFirebase();
 
         try {
-            dataFromFirebase.getValue();
+            valuesList  =  dataFromFirebase.getValue();
         }
         catch (Exception e){
             System.out.println(e);
@@ -62,12 +67,11 @@ public class StockExcell extends AppCompatActivity implements View.OnClickListen
         checkPermission();
     }
 
-    public void onClick(View v)
-    {
+    public void onClick(View v) {
         switch (v.getId())
         {
             case R.id.writeExcel:
-                saveExcelFile(this,"myExcel.xls");
+                saveExcelFile(this,"myExcel.xls", valuesList);
                 break;
             case R.id.readExcel:
                 readExcelFile(this,"myExcel.xls");
@@ -75,13 +79,15 @@ public class StockExcell extends AppCompatActivity implements View.OnClickListen
         }
     }
 
-    private static boolean saveExcelFile(Context context, String fileName) {
+    private static boolean saveExcelFile(Context context, String fileName, List<Values> valuesList) {
 
         // check if available and not read only
         if (!isExternalStorageAvailable() || isExternalStorageReadOnly()) {
             Log.e(TAG, "Storage not available or read only");
             return false;
         }
+
+        List<Values> valuesLists = valuesList;
 
         boolean success = false;
 
@@ -103,16 +109,27 @@ public class StockExcell extends AppCompatActivity implements View.OnClickListen
         Row row = sheet1.createRow(0);
 
         c = row.createCell(0);
-        c.setCellValue("Item Number");
+        c.setCellValue("Produto");
         c.setCellStyle(cs);
 
         c = row.createCell(1);
-        c.setCellValue("Quantity");
+        c.setCellValue("Quantidade");
         c.setCellStyle(cs);
 
-        c = row.createCell(2);
-        c.setCellValue("Price");
-        c.setCellStyle(cs);
+        for(int i =1; i<valuesLists.size()+1; i ++){
+            Cell x = null;
+            Row rows = sheet1.createRow(i);
+
+            x = rows.createCell(0);
+            x.setCellValue("Produto");
+
+
+            x = rows.createCell(1);
+            x.setCellValue("Quantidade");
+
+
+        }
+
 
         sheet1.setColumnWidth(0, (15 * 500));
         sheet1.setColumnWidth(1, (15 * 500));

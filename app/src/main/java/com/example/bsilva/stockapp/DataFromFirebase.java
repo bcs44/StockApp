@@ -26,27 +26,38 @@ public class DataFromFirebase {
 
     }
 
-    public void getValue() {
+    public List<Values> getValue() {
+
         database =FirebaseDatabase.getInstance();
         DatabaseReference myRef = database.getReference().child("Calcado").child("Profissional");
-
+        final List<Values> valuesList = new ArrayList<>();
+// Read from the database
         myRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                List<Values> productsList = new ArrayList<>();
+
                 for(DataSnapshot dataSnapshot1 :dataSnapshot.getChildren()){
-                    Values productsTable = dataSnapshot1.getValue(Values.class);
-                    value = productsTable.getValue();
-                    productsList.add(productsTable);
+
+                    String name = dataSnapshot1.getKey();
+                    String quantity =  dataSnapshot1.getValue(String.class);
+
+                    Values tablerow = new Values();
+                    tablerow.setName(name);
+                    tablerow.setQuantity(quantity);
+
+                    valuesList.add(tablerow);
+
                 }
             }
 
             @Override
             public void onCancelled(DatabaseError error) {
-                Log.w("Value", "Failed to read value.", error.toException());
+                // Failed to read value
+                Log.w("tag", "Failed to read value.", error.toException());
             }
         });
 
+            return valuesList;
 
     }
 }
